@@ -103,7 +103,19 @@ MiPhilipsCeilingLampLight.prototype.getServices = function() {
             });
         }.bind(this))
         .on('set', function(value, callback) {
-            if(value > 0) {
+            if(value == 1) {
+                this.device.call("set_bricct", [0,0]).then(result => {
+                    that.platform.log.debug("[MiPhilipsLightPlatform][DEBUG]MiPhilipsCeilingLamp - setNightMode Result: " + result);
+                    if(result[0] === "ok") {
+                        callback(null);
+                    } else {
+                        callback(new Error(result[0]));
+                    }
+                }).catch(function(err) {
+                    that.platform.log.error("[MiPhilipsLightPlatform][ERROR]MiPhilipsCeilingLamp - setNightMode Error: " + err);
+                    callback(err);
+                });
+            } else if(value > 1) {
                 this.device.call("set_bright", [value]).then(result => {
                     that.platform.log.debug("[MiPhilipsLightPlatform][DEBUG]MiPhilipsCeilingLamp - setBrightness Result: " + result);
                     if(result[0] === "ok") {
